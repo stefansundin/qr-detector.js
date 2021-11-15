@@ -3,6 +3,7 @@ const path = require('path');
 module.exports = {
   mode: 'production',
   entry: './src/QrDetector.ts',
+  devtool: 'source-map',
   module: {
     rules: [
       {
