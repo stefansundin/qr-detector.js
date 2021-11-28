@@ -99,6 +99,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const btn_webcam = document.getElementById('btn-webcam');
   const btn_screen_capture = document.getElementById('btn-screen-capture');
   const btn_clear = document.getElementById('btn-clear');
+  const btn_status = document.getElementById('btn-status');
   const video = document.getElementById('video');
   const video_container = document.getElementById('video-container');
   const video_overlay = document.getElementById('video-overlay');
@@ -111,7 +112,14 @@ window.addEventListener('DOMContentLoaded', () => {
   let nativeDetectorSupported;
 
   const detect = async image => {
+    btn_status.textContent = 'Detecting...';
+    btn_status.classList.add('btn-warning');
+    btn_status.classList.remove('btn-info');
     const results = await detector.detect(image);
+    btn_status.textContent = 'Idle';
+    btn_status.classList.remove('btn-warning');
+    btn_status.classList.add('btn-info');
+
     if (nativeDetectorSupported === undefined) {
       nativeDetectorSupported = detector.nativeDetectorSupported;
       alert.classList.remove('alert-info');
@@ -124,6 +132,7 @@ window.addEventListener('DOMContentLoaded', () => {
           'jsQR fallback is used. Only one QR code can be detected per frame.';
       }
     }
+
     return results;
   };
 
