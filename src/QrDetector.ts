@@ -54,26 +54,42 @@ export default class QrDetector implements BarcodeDetector {
       return [];
     }
 
-    const { x, y } = result.location.topLeftCorner;
-    const bottomRight = result.location.bottomRightCorner;
-    const boundingBox = new DOMRectReadOnly(
-      x,
-      y,
-      bottomRight.x - x,
-      bottomRight.y - y,
+    const minX = Math.min(
+      result.location.topLeftCorner.x,
+      result.location.topRightCorner.x,
+      result.location.bottomRightCorner.x,
+      result.location.bottomLeftCorner.x,
     );
-    const cornerPoints = [
-      result.location.topLeftCorner,
-      result.location.topRightCorner,
-      result.location.bottomRightCorner,
-      result.location.bottomLeftCorner,
-    ];
+    const minY = Math.min(
+      result.location.topLeftCorner.y,
+      result.location.topRightCorner.y,
+      result.location.bottomRightCorner.y,
+      result.location.bottomLeftCorner.y,
+    );
+    const maxX = Math.max(
+      result.location.topLeftCorner.x,
+      result.location.topRightCorner.x,
+      result.location.bottomRightCorner.x,
+      result.location.bottomLeftCorner.x,
+    );
+    const maxY = Math.max(
+      result.location.topLeftCorner.y,
+      result.location.topRightCorner.y,
+      result.location.bottomRightCorner.y,
+      result.location.bottomLeftCorner.y,
+    );
+
     return [
       {
         format: 'qr_code',
         rawValue: result.data,
-        boundingBox,
-        cornerPoints,
+        boundingBox: new DOMRectReadOnly(minX, minY, maxX - minX, maxY - minY),
+        cornerPoints: [
+          result.location.topLeftCorner,
+          result.location.topRightCorner,
+          result.location.bottomRightCorner,
+          result.location.bottomLeftCorner,
+        ],
       },
     ];
   }
