@@ -131,10 +131,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const results = await detect(f);
     if (results.length === 0) {
       console.warn('No QR codes detected in image.');
-      return;
     }
     createOutput(results);
-
     const container = document.createElement('div');
     container.className = 'mb-3';
     const canvas = document.createElement('canvas');
