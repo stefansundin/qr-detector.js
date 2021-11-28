@@ -14,6 +14,13 @@
   "scripts": {
     "build": "./build.sh"
   },
+  "keywords": [
+    "qr",
+    "qrcode",
+    "polyfill",
+    "jsqr",
+    "barcodedetector"
+  ],
   "dependencies": {
     "jsqr-es6": "^1.4.0-1"
   },
