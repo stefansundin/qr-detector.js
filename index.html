@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QrDetector Demo</title>
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+  <link rel="stylesheet" href="demo.css">
+  <script src="https://cdn.jsdelivr.net/gh/stefansundin/qr-detector.js@latest/dist/QrDetector.min.js"></script>
+  <script src="demo.js"></script>
+</head>
+<body>
+  <header class="mt-4 text-center">
+    <h1 itemprop="name">QrDetector Demo</h1>
+  </header>
+
+  <div class="container">
+    <noscript><h1 class="text-center">You need to enable JavaScript to run this app.</h1></noscript>
+
+    <h1>Package info</h1>
+    <p>
+      <a href="https://www.npmjs.com/package/qr-detector">https://www.npmjs.com/package/qr-detector</a><br>
+      <a href="https://github.com/stefansundin/qr-detector.js">https://github.com/stefansundin/qr-detector.js</a>
+    </p>
+    <div class="mb-3">
+      <label for="script-tag" class="form-label">Use in a <code>&lt;script&gt;</code> tag:</label>
+      <textarea class="form-control" id="script-tag" rows="1" spellcheck="false">&lt;script src="https://cdn.jsdelivr.net/gh/stefansundin/qr-detector.js@v0.0.2/dist/QrDetector.min.js"&gt;&lt;/script&gt;</textarea>
+    </div>
+
+    <input class="d-none" type="file" id="input-file" accept="image/*, video/*">
+
+    <h1>Demo</h1>
+    <p>Select an image or video file (or drag and drop), or use the button below to use your webcam or screen capture. All detection is done in the web browser.</p>
+    <p>Tip: get a sample image <a href="https://duckduckgo.com/?q=qr+code&iax=images&ia=images" target="_blank" rel="noreferrer">from a search engine</a> to test with.</p>
+
+    <div class="mb-3">
+      <button class="btn btn-primary" id="btn-file">Select local file</button>
+      <button class="btn btn-primary ml-2" id="btn-webcam">Start webcam</button>
+      <button class="btn btn-primary ml-2" id="btn-screen-capture">Start screen capture</button>
+      <button class="btn btn-danger ml-2" id="btn-clear">Clear results</button>
+    </div>
+
+    <div class="mb-3 clearfix d-none" id="video-container">
+      <video id="video" autoplay muted controls controlslist="nofullscreen nodownload disablepictureinpicture"></video>
+      <canvas id="video-overlay"></canvas>
+    </div>
+
+    <div id="images" class="clearfix"></div>
+    <div id="output"></div>
+
+    <div class="alert alert-info" role="alert" id="alert-native-support">
+      Perform a detection to see if you have native BarcodeDetector support.
+    </div>
+  </div>
+
+  <div id="dropzone" class="d-none"></div>
+</body>
+</html>

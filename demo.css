@@ -1,0 +1,38 @@
+body {
+  margin-bottom: 200px;
+}
+
+#script-tag {
+  min-height: 40px;
+}
+
+#images canvas {
+  max-width: 200px;
+  max-height: 200px;
+  float: left;
+  margin: 0 5px 5px 0;
+}
+
+#video-container {
+  position: relative;
+}
+#video {
+  max-width: 800px;
+  object-fit: contain;
+  border: 1px solid black;
+}
+#video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+#dropzone {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(50, 50, 50, 0.5);
+}
