@@ -1,6 +1,6 @@
 {
   "name": "qr-detector",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A QR decoder that uses BarcodeDetector with a fallback to jsQR.",
   "homepage": "https://github.com/stefansundin/qr-detector.js",
   "repository": {
