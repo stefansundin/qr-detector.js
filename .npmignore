@@ -1,0 +1,11 @@
+Thumbs.db
+*.DS_Store
+*.swp
+.~lock.*
+
+node_modules
+yarn-error.log
+
+dist/QrDetector.min.js*
+build.sh
+webpack.config.js
