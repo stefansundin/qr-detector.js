@@ -5,8 +5,8 @@ const utils_1 = require("./utils");
 class QrDetector {
     constructor(barcodeDetectorOptions) {
         this.nativeDetectorSupported = undefined;
-        if (window.BarcodeDetector) {
-            this.barcodeDetector = new window.BarcodeDetector(barcodeDetectorOptions);
+        if (self.BarcodeDetector) {
+            this.barcodeDetector = new self.BarcodeDetector(barcodeDetectorOptions);
         }
     }
     async detect(image) {
@@ -14,10 +14,9 @@ class QrDetector {
             return this.barcodeDetector.detect(image);
         }
         else if (this.nativeDetectorSupported === undefined) {
-            if (window.BarcodeDetector) {
-                const supportedFormats = await window.BarcodeDetector.getSupportedFormats();
+            if (self.BarcodeDetector) {
+                const supportedFormats = await self.BarcodeDetector.getSupportedFormats();
                 if (supportedFormats.includes('qr_code')) {
-                    console.log('using native BarcodeDetector');
                     this.nativeDetectorSupported = true;
                     return this.barcodeDetector.detect(image);
                 }
@@ -36,7 +35,7 @@ class QrDetector {
             throw Error('The image is not provided in a supported format.');
         }
         const result = (0, jsqr_es6_1.default)(image.data, image.width, image.height);
-        if (!result) {
+        if (!result || result.data === '') {
             return [];
         }
         const minX = Math.min(result.location.topLeftCorner.x, result.location.topRightCorner.x, result.location.bottomRightCorner.x, result.location.bottomLeftCorner.x);
