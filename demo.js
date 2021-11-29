@@ -19,6 +19,23 @@ if (!window.OffscreenCanvas) {
   };
 }
 
+const canvasImageSourceToImageData = img => {
+  let canvas;
+  if (img instanceof HTMLVideoElement) {
+    canvas = new OffscreenCanvas(img.videoWidth, img.videoHeight);
+  } else if (img instanceof SVGImageElement) {
+    canvas = new OffscreenCanvas(
+      img.width.baseVal.value,
+      img.height.baseVal.value,
+    );
+  } else {
+    canvas = new OffscreenCanvas(img.width, img.height);
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  return ctx.getImageData(0, 0, canvas.width, canvas.height);
+};
+
 const drawLines = (ctx, color, lineWidth, points) => {
   ctx.strokeStyle = color;
   ctx.lineWidth = lineWidth;
@@ -94,6 +111,7 @@ const drawCorners = (ctx, cornerPoints, scaleX = 1, scaleY = 1, p = 0.25) => {
 
 window.addEventListener('DOMContentLoaded', () => {
   const detector = new QrDetector({ formats: ['qr_code'] });
+  const use_worker = document.getElementById('use-worker');
   const input_file = document.getElementById('input-file');
   const btn_file = document.getElementById('btn-file');
   const btn_webcam = document.getElementById('btn-webcam');
@@ -111,11 +129,59 @@ window.addEventListener('DOMContentLoaded', () => {
   const outputMap = {};
   let nativeDetectorSupported;
 
-  const detect = async image => {
+  let worker;
+  let workerNonce = 0;
+  const workerPromises = {};
+
+  use_worker.addEventListener('change', e => {
+    if (use_worker.checked) {
+      try {
+        worker = new Worker('worker.js');
+        worker.addEventListener('message', e => {
+          const [nonce, results] = e.data;
+          const [resolve, _] = workerPromises[nonce];
+          delete workerPromises[nonce];
+          resolve(results);
+        });
+      } catch (e) {
+        console.error(e);
+        use_worker.checked = false;
+        use_worker.disabled = true;
+        const label = document.querySelector('label[for="use-worker"]');
+        label.classList.add('text-danger');
+        label.title = e;
+        label.appendChild(document.createTextNode(' (error loading)'));
+      }
+    } else {
+      worker.terminate();
+      worker = null;
+      for (const nonce in workerPromises) {
+        const [_, reject] = workerPromises[nonce];
+        delete workerPromises[nonce];
+        reject();
+      }
+      return;
+    }
+  });
+
+  const detect = async input => {
     btn_status.textContent = 'Detecting...';
     btn_status.classList.add('btn-warning');
     btn_status.classList.remove('btn-info');
-    const results = await detector.detect(image);
+    let results;
+    if (use_worker.checked) {
+      if (!(input instanceof ImageData)) {
+        // If the detector is running in a web worker then we first have to convert the input to ImageData
+        input = canvasImageSourceToImageData(input);
+      }
+      results = await new Promise((resolve, reject) => {
+        workerPromises[workerNonce] = [resolve, reject];
+        worker.postMessage([workerNonce, input]);
+        workerNonce += 1;
+      });
+    } else {
+      results = await detector.detect(input);
+    }
     btn_status.textContent = 'Idle';
     btn_status.classList.remove('btn-warning');
     btn_status.classList.add('btn-info');
