@@ -13,8 +13,8 @@ export default class QrDetector implements BarcodeDetector {
   barcodeDetector: BarcodeDetector;
 
   constructor(barcodeDetectorOptions?: BarcodeDetectorOptions) {
-    if ((window as any).BarcodeDetector) {
-      this.barcodeDetector = new (window as any).BarcodeDetector(
+    if ((self as any).BarcodeDetector) {
+      this.barcodeDetector = new (self as any).BarcodeDetector(
         barcodeDetectorOptions,
       );
     }
@@ -25,9 +25,9 @@ export default class QrDetector implements BarcodeDetector {
     if (this.nativeDetectorSupported) {
       return this.barcodeDetector.detect(image);
     } else if (this.nativeDetectorSupported === undefined) {
-      if ((window as any).BarcodeDetector) {
+      if ((self as any).BarcodeDetector) {
         const supportedFormats = await (
-          window as any
+          self as any
         ).BarcodeDetector.getSupportedFormats();
         if (supportedFormats.includes('qr_code')) {
           this.nativeDetectorSupported = true;

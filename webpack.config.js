@@ -20,7 +20,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'QrDetector.min.js',
     library: {
-      type: 'window',
+      type: 'self',
       name: 'QrDetector',
       export: 'default',
     },
