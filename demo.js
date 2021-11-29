@@ -128,6 +128,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const dropzone = document.getElementById('dropzone');
   const outputMap = {};
   let nativeDetectorSupported;
+  let numProcessing = 0;
 
   let worker;
   let workerNonce = 0;
@@ -169,22 +170,29 @@ window.addEventListener('DOMContentLoaded', () => {
     btn_status.classList.add('btn-warning');
     btn_status.classList.remove('btn-info');
     let results;
-    if (use_worker.checked) {
-      if (!(input instanceof ImageData)) {
-        // If the detector is running in a web worker then we first have to convert the input to ImageData
-        input = canvasImageSourceToImageData(input);
+    try {
+      numProcessing++;
+      if (use_worker.checked) {
+        if (!(input instanceof ImageData)) {
+          // If the detector is running in a web worker then we first have to convert the input to ImageData
+          input = canvasImageSourceToImageData(input);
+        }
+        results = await new Promise((resolve, reject) => {
+          workerPromises[workerNonce] = [resolve, reject];
+          worker.postMessage([workerNonce, input]);
+          workerNonce++;
+        });
+      } else {
+        results = await detector.detect(input);
       }
-      results = await new Promise((resolve, reject) => {
-        workerPromises[workerNonce] = [resolve, reject];
-        worker.postMessage([workerNonce, input]);
-        workerNonce += 1;
-      });
-    } else {
-      results = await detector.detect(input);
+    } finally {
+      numProcessing--;
     }
-    btn_status.textContent = 'Idle';
-    btn_status.classList.remove('btn-warning');
-    btn_status.classList.add('btn-info');
+    if (numProcessing === 0 && !video.src && !video.srcObject) {
+      btn_status.textContent = 'Idle';
+      btn_status.classList.remove('btn-warning');
+      btn_status.classList.add('btn-info');
+    }
 
     if (nativeDetectorSupported === undefined) {
       nativeDetectorSupported = detector.nativeDetectorSupported;
@@ -262,6 +270,11 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     video.srcObject.getTracks().forEach(track => track.stop());
     video.srcObject = null;
+    if (numProcessing === 0) {
+      btn_status.textContent = 'Idle';
+      btn_status.classList.remove('btn-warning');
+      btn_status.classList.add('btn-info');
+    }
   };
 
   const updateVideoOverlay = () => {
