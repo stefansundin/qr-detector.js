@@ -252,7 +252,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const videoChange = async e => {
     video_container.classList.remove('d-none');
-    if (!video.srcObject) {
+    if (video.srcObject) {
+      // Detect when the user ends the stream using the browser controls
+      video.srcObject.getTracks().forEach(t =>
+        t.addEventListener('ended', e => {
+          stopCamera();
+          videoChange();
+        }),
+      );
+    } else {
       btn_webcam.textContent = 'Start webcam';
       btn_screen_capture.textContent = 'Start screen capture';
     }
@@ -270,6 +278,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     video.srcObject.getTracks().forEach(track => track.stop());
     video.srcObject = null;
+    btn_webcam.disabled = false;
+    btn_screen_capture.disabled = false;
     if (numProcessing === 0) {
       btn_status.textContent = 'Idle';
       btn_status.classList.remove('btn-warning');
@@ -397,14 +407,22 @@ window.addEventListener('DOMContentLoaded', () => {
       video.pause();
       video.removeAttribute('src');
       btn_webcam.disabled = true;
+      btn_screen_capture.disabled = true;
       try {
         video.srcObject = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'environment' },
           audio: false,
         });
+      } catch (e) {
+        console.error(e);
+        btn_webcam.classList.add('btn-danger');
+        btn_webcam.textContent = e;
+        btn_screen_capture.disabled = false;
+        return;
       } finally {
         btn_webcam.disabled = false;
       }
+      btn_webcam.classList.remove('btn-danger');
       btn_webcam.textContent = 'Stop webcam';
     } else {
       stopCamera();
@@ -416,6 +434,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (video.srcObject === null) {
       video.pause();
       video.removeAttribute('src');
+      btn_webcam.disabled = true;
       btn_screen_capture.disabled = true;
       try {
         video.srcObject = await navigator.mediaDevices.getDisplayMedia({
@@ -424,9 +443,16 @@ window.addEventListener('DOMContentLoaded', () => {
           },
           audio: false,
         });
+      } catch (e) {
+        console.error(e);
+        btn_screen_capture.classList.add('btn-danger');
+        btn_screen_capture.textContent = e;
+        btn_webcam.disabled = false;
+        return;
       } finally {
         btn_screen_capture.disabled = false;
       }
+      btn_screen_capture.classList.remove('btn-danger');
       btn_screen_capture.textContent = 'Stop screen capture';
     } else {
       stopCamera();
