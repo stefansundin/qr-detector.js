@@ -30,7 +30,6 @@ export default class QrDetector implements BarcodeDetector {
           window as any
         ).BarcodeDetector.getSupportedFormats();
         if (supportedFormats.includes('qr_code')) {
-          console.log('using native BarcodeDetector');
           this.nativeDetectorSupported = true;
           return this.barcodeDetector.detect(image);
         }
