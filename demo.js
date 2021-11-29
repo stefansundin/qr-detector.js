@@ -158,7 +158,7 @@ window.addEventListener('DOMContentLoaded', () => {
       for (const nonce in workerPromises) {
         const [_, reject] = workerPromises[nonce];
         delete workerPromises[nonce];
-        reject();
+        reject('Worker terminated.');
       }
       return;
     }
@@ -203,26 +203,30 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   const detectImage = async f => {
-    const results = await detect(f);
-    if (results.length === 0) {
-      console.warn('No QR codes detected in image.');
+    try {
+      const results = await detect(f);
+      if (results.length === 0) {
+        console.warn('No QR codes detected in image.');
+      }
+      createOutput(results);
+      const container = document.createElement('div');
+      container.className = 'mb-3';
+      const canvas = document.createElement('canvas');
+      canvas.width = f.width;
+      canvas.height = f.height;
+      const ctx = canvas.getContext('2d', { alpha: false });
+      const bitmap_ctx = canvas.getContext('bitmaprenderer', { alpha: false });
+      if (bitmap_ctx) {
+        bitmap_ctx.transferFromImageBitmap(f);
+      } else {
+        ctx.drawImage(f, 0, 0);
+      }
+      results.forEach(r => drawCorners(ctx, r.cornerPoints));
+      container.appendChild(canvas);
+      images.prepend(container);
+    } catch (e) {
+      console.error(e);
     }
-    createOutput(results);
-    const container = document.createElement('div');
-    container.className = 'mb-3';
-    const canvas = document.createElement('canvas');
-    canvas.width = f.width;
-    canvas.height = f.height;
-    const ctx = canvas.getContext('2d', { alpha: false });
-    const bitmap_ctx = canvas.getContext('bitmaprenderer', { alpha: false });
-    if (bitmap_ctx) {
-      bitmap_ctx.transferFromImageBitmap(f);
-    } else {
-      ctx.drawImage(f, 0, 0);
-    }
-    results.forEach(r => drawCorners(ctx, r.cornerPoints));
-    container.appendChild(canvas);
-    images.prepend(container);
   };
 
   const handleFile = async file => {
@@ -276,42 +280,48 @@ window.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const results = await detect(video);
-      if (results.length > 0) {
-        createOutput(results);
+      try {
+        const results = await detect(video);
+        if (results.length > 0) {
+          createOutput(results);
 
-        const canvas = new OffscreenCanvas(
-          video.clientWidth,
-          video.clientHeight,
-        );
-        const ctx = canvas.getContext('2d');
-        ctx.font = '24px';
-
-        const scaleX = video.clientWidth / video.videoWidth;
-        const scaleY = video.clientHeight / video.videoHeight;
-
-        results.forEach(r => drawCorners(ctx, r.cornerPoints, scaleX, scaleY));
-        results.forEach(r => {
-          const textSize = ctx.measureText(r.rawValue);
-          ctx.fillStyle = 'white';
-          ctx.fillRect(
-            scaleX * (r.boundingBox.x - 2),
-            scaleY * (r.boundingBox.y + r.boundingBox.height + 5),
-            textSize.width + 4,
-            textSize.actualBoundingBoxAscent + 5,
+          const canvas = new OffscreenCanvas(
+            video.clientWidth,
+            video.clientHeight,
           );
-          ctx.fillStyle = 'black';
-          ctx.fillText(
-            r.rawValue,
-            scaleX * r.boundingBox.x,
-            scaleY * (r.boundingBox.y + r.boundingBox.height + 8) +
-              textSize.actualBoundingBoxAscent,
-          );
-        });
+          const ctx = canvas.getContext('2d');
+          ctx.font = '24px';
 
-        video_overlay_ctx.transferFromImageBitmap(
-          await canvas.transferToImageBitmap(),
-        );
+          const scaleX = video.clientWidth / video.videoWidth;
+          const scaleY = video.clientHeight / video.videoHeight;
+
+          results.forEach(r =>
+            drawCorners(ctx, r.cornerPoints, scaleX, scaleY),
+          );
+          results.forEach(r => {
+            const textSize = ctx.measureText(r.rawValue);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(
+              scaleX * (r.boundingBox.x - 2),
+              scaleY * (r.boundingBox.y + r.boundingBox.height + 5),
+              textSize.width + 4,
+              textSize.actualBoundingBoxAscent + 5,
+            );
+            ctx.fillStyle = 'black';
+            ctx.fillText(
+              r.rawValue,
+              scaleX * r.boundingBox.x,
+              scaleY * (r.boundingBox.y + r.boundingBox.height + 8) +
+                textSize.actualBoundingBoxAscent,
+            );
+          });
+
+          video_overlay_ctx.transferFromImageBitmap(
+            await canvas.transferToImageBitmap(),
+          );
+        }
+      } catch (e) {
+        console.error(e);
       }
 
       if (!video.paused && !video.ended) {
