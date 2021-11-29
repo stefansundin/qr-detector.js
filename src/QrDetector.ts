@@ -49,7 +49,8 @@ export default class QrDetector implements BarcodeDetector {
     }
 
     const result = jsQR(image.data, image.width, image.height);
-    if (!result) {
+    if (!result || result.data === '') {
+      // For some reason, jsQR can sometimes return an invalid result with an empty string. Probably a bug in jsQR?
       return [];
     }
 
