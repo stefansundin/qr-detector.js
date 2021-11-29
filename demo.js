@@ -190,9 +190,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!video.srcObject) {
       return;
     }
-    video.srcObject.getTracks().forEach(function (track) {
-      track.stop();
-    });
+    video.srcObject.getTracks().forEach(track => track.stop());
     video.srcObject = null;
   };
 
