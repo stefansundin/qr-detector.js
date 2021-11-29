@@ -202,6 +202,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const processVideoFrame = () => {
     requestAnimationFrame(async () => {
+      if (!video.src && !video.srcObject) {
+        return;
+      }
       if (video.readyState <= 1) {
         processVideoFrame();
         return;
