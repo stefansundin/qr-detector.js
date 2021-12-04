@@ -134,6 +134,12 @@ window.addEventListener('DOMContentLoaded', () => {
   let workerNonce = 0;
   const workerPromises = {};
 
+  const script = document.querySelector(
+    'script[src^="https://cdn.jsdelivr.net/gh/stefansundin/qr-detector.js"]',
+  );
+  const script_tag = document.getElementById('script-tag');
+  script_tag.textContent = `<script src="${script.src}" integrity="${script.integrity}" crossorigin="${script.crossOrigin}"></script>`;
+
   use_worker.addEventListener('change', e => {
     if (use_worker.checked) {
       try {
