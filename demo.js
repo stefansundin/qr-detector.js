@@ -19,6 +19,16 @@ if (!window.OffscreenCanvas) {
   };
 }
 
+const nativeBarcodeDetectorSupported = async () => {
+  if (window.BarcodeDetector) {
+    const supportedFormats = await window.BarcodeDetector.getSupportedFormats();
+    if (supportedFormats.includes('qr_code')) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const canvasImageSourceToImageData = img => {
   let canvas;
   if (img instanceof HTMLVideoElement) {
@@ -127,7 +137,6 @@ window.addEventListener('DOMContentLoaded', () => {
   const alert = document.getElementById('alert-native-support');
   const dropzone = document.getElementById('dropzone');
   const outputMap = {};
-  let nativeDetectorSupported;
   let numProcessing = 0;
 
   let worker;
@@ -139,6 +148,19 @@ window.addEventListener('DOMContentLoaded', () => {
   );
   const script_tag = document.getElementById('script-tag');
   script_tag.textContent = `<script src="${script.src}" integrity="${script.integrity}" crossorigin="${script.crossOrigin}"></script>`;
+
+  nativeBarcodeDetectorSupported().then(supported => {
+    if (supported) {
+      alert.classList.add('alert-success');
+      alert.textContent =
+        'Your browser has native support for BarcodeDetector.';
+    } else {
+      alert.classList.add('alert-danger');
+      alert.textContent =
+        'Your browser does not have native support for BarcodeDetector. jsQR fallback will be used. Only one QR code can be detected per frame.';
+    }
+    alert.classList.remove('d-none');
+  });
 
   use_worker.addEventListener('change', e => {
     if (use_worker.checked) {
@@ -198,19 +220,6 @@ window.addEventListener('DOMContentLoaded', () => {
       btn_status.textContent = 'Idle';
       btn_status.classList.remove('btn-warning');
       btn_status.classList.add('btn-info');
-    }
-
-    if (nativeDetectorSupported === undefined) {
-      nativeDetectorSupported = detector.nativeDetectorSupported;
-      alert.classList.remove('alert-info');
-      if (nativeDetectorSupported) {
-        alert.classList.add('alert-success');
-        alert.textContent = 'Native BarcodeDetector is used.';
-      } else {
-        alert.classList.add('alert-danger');
-        alert.textContent =
-          'jsQR fallback is used. Only one QR code can be detected per frame.';
-      }
     }
 
     return results;
