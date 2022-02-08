@@ -253,6 +253,9 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   const handleFile = async file => {
+    if (!file) {
+      return;
+    }
     if (file.type.startsWith('image/')) {
       detectImage(await createImageBitmap(file));
     } else if (file.type.startsWith('video/')) {
@@ -277,7 +280,9 @@ window.addEventListener('DOMContentLoaded', () => {
       );
     } else {
       btn_webcam.textContent = 'Start webcam';
+      btn_webcam.classList.remove('btn-danger');
       btn_screen_capture.textContent = 'Start screen capture';
+      btn_screen_capture.classList.remove('btn-danger');
     }
     // Clear the video overlay
     const canvas = new OffscreenCanvas(video.clientWidth, video.clientHeight);
