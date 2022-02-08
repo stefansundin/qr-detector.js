@@ -523,4 +523,20 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
+
+  window.addEventListener('paste', e => {
+    e.preventDefault();
+    for (const item of e.clipboardData.items) {
+      if (item.type.startsWith('image/')) {
+        handleFile(item.getAsFile());
+      } else if (item.type == 'text/plain') {
+        const text = e.clipboardData.getData('text/plain');
+        if (text.startsWith('data:image/')) {
+          const img = new Image();
+          img.addEventListener('load', () => detectImage(img));
+          img.src = text;
+        }
+      }
+    }
+  });
 });
