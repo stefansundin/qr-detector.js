@@ -382,7 +382,12 @@ window.addEventListener('DOMContentLoaded', () => {
       } else {
         container = document.createElement('div');
         container.className = 'input-group mt-2 mb-2';
-        const input = document.createElement('input');
+        let input;
+        if (item.rawValue.includes('\n')) {
+          input = document.createElement('textarea');
+        } else {
+          input = document.createElement('input');
+        }
         input.type = 'text';
         input.readonly = true;
         input.className = 'form-control';
