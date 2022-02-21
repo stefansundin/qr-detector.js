@@ -527,15 +527,37 @@ window.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('paste', e => {
     e.preventDefault();
     for (const item of e.clipboardData.items) {
-      if (item.type.startsWith('image/')) {
-        handleFile(item.getAsFile());
-      } else if (item.type == 'text/plain') {
+      if (item.kind === 'string') {
+        // Check if pasting a data URI
         const text = e.clipboardData.getData('text/plain');
         if (text.startsWith('data:image/')) {
           const img = new Image();
-          img.addEventListener('load', () => detectImage(img));
+          img.addEventListener('load', () => handleFile(img));
           img.src = text;
         }
+        continue;
+      }
+      if (item.kind !== 'file') {
+        continue;
+      }
+
+      if (item.type.startsWith('image/')) {
+        handleFile(item.getAsFile());
+      } else if (item.type === 'text/plain') {
+        // Check if pasting a text file that contains a data URI
+        // This does not work well in Firefox
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+          const text = reader.result;
+          if (text.startsWith('data:image/')) {
+            const img = new Image();
+            img.addEventListener('load', () => handleFile(img));
+            img.src = text;
+          }
+        });
+        reader.readAsText(item.getAsFile());
+      } else {
+        console.warn('Unknown file type');
       }
     }
   });
