@@ -1,6 +1,9 @@
 body {
   margin-bottom: 200px;
 }
+summary, label {
+  user-select: none;
+}
 
 #script-tag {
   min-height: 65px;

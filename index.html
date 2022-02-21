@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
   <title>QrDetector Demo</title>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' data:; media-src blob:">
   <link rel="icon" href="icon.png">
@@ -23,20 +23,20 @@
       </div>
     </noscript>
 
-    <h1>Package info</h1>
-    <p>
-      <a href="https://www.npmjs.com/package/qr-detector" target="_blank" rel="noreferrer">https://www.npmjs.com/package/qr-detector</a><br>
-      <a href="https://github.com/stefansundin/qr-detector.js" target="_blank" rel="noreferrer">https://github.com/stefansundin/qr-detector.js</a>
-    </p>
-    <div class="mb-3">
-      <label for="script-tag" class="form-label">Use in a <code>&lt;script&gt;</code> tag:</label>
-      <textarea class="form-control" id="script-tag" rows="2" spellcheck="false"></textarea>
-    </div>
-    <p>React demo: <a href="https://github.com/stefansundin/qr-detector.js/tree/react-demo" target="_blank" rel="noreferrer">https://github.com/stefansundin/qr-detector.js/tree/react-demo</a></p>
+    <details class="mb-2">
+      <summary>Show package info</summary>
+      <p>
+        <a href="https://www.npmjs.com/package/qr-detector" target="_blank" rel="noreferrer">https://www.npmjs.com/package/qr-detector</a><br>
+        <a href="https://github.com/stefansundin/qr-detector.js" target="_blank" rel="noreferrer">https://github.com/stefansundin/qr-detector.js</a>
+      </p>
+      <div class="mb-3">
+        <label for="script-tag" class="form-label">Use in a <code>&lt;script&gt;</code> tag:</label>
+        <textarea class="form-control" id="script-tag" rows="2" spellcheck="false"></textarea>
+      </div>
+      <p>React demo: <a href="https://github.com/stefansundin/qr-detector.js/tree/react-demo" target="_blank" rel="noreferrer">https://github.com/stefansundin/qr-detector.js/tree/react-demo</a></p>
+      <hr>
+    </details>
 
-    <input class="d-none" type="file" id="input-file" accept="image/*, video/*" multiple>
-
-    <h1>Demo</h1>
     <p>Select an image or video file (or drag and drop), or use the button below to use your webcam or screen capture. All detection is done in the web browser.</p>
     <p>Tip: get a sample image <a href="https://duckduckgo.com/?q=qr+code&iax=images&ia=images" target="_blank" rel="noreferrer">from a search engine</a> to test with.</p>
 
@@ -63,6 +63,7 @@
     <div class="alert d-none" role="alert" id="alert-native-support"></div>
   </div>
 
+  <input class="d-none" type="file" id="input-file" accept="image/*, video/*" multiple>
   <div id="dropzone" class="d-none"></div>
 </body>
 </html>
