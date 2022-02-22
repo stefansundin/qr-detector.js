@@ -5,3 +5,6 @@ Thumbs.db
 
 node_modules
 yarn-error.log
+
+*.key
+*.crt

@@ -561,4 +561,47 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
+
+  if (navigator.serviceWorker && document.location.protocol === 'https:') {
+    const install_service_worker = document.getElementById(
+      'install-service-worker',
+    );
+    install_service_worker.disabled = false;
+
+    async function refresh_service_worker_info() {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      install_service_worker.textContent = `${
+        registrations.length > 0 ? 'Uninstall' : 'Install'
+      } service worker`;
+    }
+    refresh_service_worker_info();
+
+    install_service_worker.addEventListener('click', async e => {
+      e.preventDefault();
+      install_service_worker.indeterminate = true;
+
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      if (registrations.length > 0) {
+        for (const registration of registrations) {
+          await registration.unregister();
+        }
+        await caches.delete('qr-detector.js');
+      } else {
+        await navigator.serviceWorker.register('service-worker.js');
+      }
+      refresh_service_worker_info();
+    });
+  }
+
+  let deferredPrompt;
+  const btn_a2hs = document.getElementById('a2hs');
+  btn_a2hs.addEventListener('click', () => {
+    btn_a2hs.disabled = true;
+    deferredPrompt.prompt();
+  });
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    btn_a2hs.disabled = false;
+  });
 });
