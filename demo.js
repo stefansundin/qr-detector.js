@@ -532,10 +532,10 @@ window.addEventListener('DOMContentLoaded', () => {
         const text = e.clipboardData.getData('text/plain');
         if (text.startsWith('data:image/')) {
           const img = new Image();
-          img.addEventListener('load', () => handleFile(img));
+          img.addEventListener('load', () => detectImage(img));
           img.src = text;
         }
-        continue;
+        return;
       }
       if (item.kind !== 'file') {
         continue;
@@ -551,7 +551,7 @@ window.addEventListener('DOMContentLoaded', () => {
           const text = reader.result;
           if (text.startsWith('data:image/')) {
             const img = new Image();
-            img.addEventListener('load', () => handleFile(img));
+            img.addEventListener('load', () => detectImage(img));
             img.src = text;
           }
         });
