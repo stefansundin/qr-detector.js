@@ -172,13 +172,13 @@ window.addEventListener('DOMContentLoaded', () => {
           delete workerPromises[nonce];
           resolve(results);
         });
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
         use_worker.checked = false;
         use_worker.disabled = true;
         const label = document.querySelector('label[for="use-worker"]');
         label.classList.add('text-danger');
-        label.title = e;
+        label.title = err;
         label.appendChild(document.createTextNode(' (error loading)'));
       }
     } else {
@@ -247,8 +247,8 @@ window.addEventListener('DOMContentLoaded', () => {
       results.forEach(r => drawCorners(ctx, r.cornerPoints));
       container.appendChild(canvas);
       images.prepend(container);
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -363,8 +363,8 @@ window.addEventListener('DOMContentLoaded', () => {
             await canvas.transferToImageBitmap(),
           );
         }
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
       }
 
       if (!video.paused && !video.ended) {
@@ -438,10 +438,10 @@ window.addEventListener('DOMContentLoaded', () => {
           video: { facingMode: 'environment' },
           audio: false,
         });
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
         btn_webcam.classList.add('btn-danger');
-        btn_webcam.textContent = e;
+        btn_webcam.textContent = err;
         btn_screen_capture.disabled = false;
         return;
       } finally {
@@ -468,10 +468,10 @@ window.addEventListener('DOMContentLoaded', () => {
           },
           audio: false,
         });
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
         btn_screen_capture.classList.add('btn-danger');
-        btn_screen_capture.textContent = e;
+        btn_screen_capture.textContent = err;
         btn_webcam.disabled = false;
         return;
       } finally {
