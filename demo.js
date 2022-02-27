@@ -125,6 +125,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const input_file = document.getElementById('input-file');
   const btn_file = document.getElementById('btn-file');
   const btn_webcam = document.getElementById('btn-webcam');
+  const list_webcam = document.getElementById('list-webcam');
   const btn_screen_capture = document.getElementById('btn-screen-capture');
   const btn_clear = document.getElementById('btn-clear');
   const btn_status = document.getElementById('btn-status');
@@ -138,6 +139,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const dropzone = document.getElementById('dropzone');
   const outputMap = {};
   let numProcessing = 0;
+  let defaultDeviceId;
 
   let worker;
   let workerNonce = 0;
@@ -412,6 +414,50 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  const startWebcam = async deviceId => {
+    const constraints = {
+      video: { facingMode: 'environment' },
+      audio: false,
+    };
+    if (deviceId) {
+      defaultDeviceId = deviceId;
+      if (video.srcObject !== null) {
+        stopCamera();
+        videoChange();
+      }
+    } else if (defaultDeviceId) {
+      deviceId = defaultDeviceId;
+    }
+    if (deviceId) {
+      constraints.video = { deviceId };
+    }
+
+    if (video.srcObject === null) {
+      video.pause();
+      video.removeAttribute('src');
+      btn_webcam.disabled = true;
+      btn_screen_capture.disabled = true;
+      try {
+        video.srcObject = await navigator.mediaDevices.getUserMedia(
+          constraints,
+        );
+      } catch (err) {
+        console.error(err);
+        btn_webcam.classList.add('btn-danger');
+        btn_webcam.textContent = err;
+        btn_screen_capture.disabled = false;
+        return;
+      } finally {
+        btn_webcam.disabled = false;
+      }
+      btn_webcam.classList.remove('btn-danger');
+      btn_webcam.textContent = 'Stop webcam';
+    } else {
+      stopCamera();
+      videoChange();
+    }
+  };
+
   input_file.addEventListener('change', async e => {
     for (const file of e.target.files) {
       handleFile(file);
@@ -427,31 +473,52 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   video.addEventListener('seeked', processVideoFrame);
 
-  btn_webcam.addEventListener('click', async () => {
-    if (video.srcObject === null) {
-      video.pause();
-      video.removeAttribute('src');
-      btn_webcam.disabled = true;
-      btn_screen_capture.disabled = true;
-      try {
-        video.srcObject = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' },
-          audio: false,
-        });
-      } catch (err) {
-        console.error(err);
-        btn_webcam.classList.add('btn-danger');
-        btn_webcam.textContent = err;
-        btn_screen_capture.disabled = false;
-        return;
-      } finally {
-        btn_webcam.disabled = false;
+  btn_webcam.addEventListener('click', () => startWebcam());
+  $(list_webcam.parentElement).on('show.bs.dropdown', async () => {
+    try {
+      // Note: can't access the device label when the file:// protocol is used!
+      let devices = (await navigator.mediaDevices.enumerateDevices()).filter(
+        device => device.kind === 'videoinput',
+      );
+      if (!devices.every(device => device.deviceId)) {
+        await navigator.mediaDevices
+          .getUserMedia({ video: true })
+          .then(mediaStream =>
+            mediaStream.getTracks().forEach(track => track.stop()),
+          );
+        devices = (await navigator.mediaDevices.enumerateDevices()).filter(
+          device => device.kind === 'videoinput',
+        );
       }
-      btn_webcam.classList.remove('btn-danger');
-      btn_webcam.textContent = 'Stop webcam';
-    } else {
-      stopCamera();
-      videoChange();
+      while (list_webcam.hasChildNodes()) {
+        list_webcam.removeChild(list_webcam.firstChild);
+      }
+      if (devices.length === 0) {
+        const item = document.createElement('button');
+        item.className = 'dropdown-item';
+        item.textContent = 'No webcam devices found';
+        list_webcam.appendChild(item);
+      } else {
+        devices.forEach(device => {
+          const item = document.createElement('button');
+          item.className = 'dropdown-item';
+          item.textContent = device.label || 'Unnamed device';
+          if (defaultDeviceId === device.deviceId) {
+            item.classList.add('font-weight-bold');
+          }
+          item.addEventListener('click', () => startWebcam(device.deviceId));
+          list_webcam.appendChild(item);
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      while (list_webcam.hasChildNodes()) {
+        list_webcam.removeChild(list_webcam.firstChild);
+      }
+      const item = document.createElement('span');
+      item.className = 'dropdown-header font-weight-bold';
+      item.textContent = err.toString();
+      list_webcam.appendChild(item);
     }
   });
 

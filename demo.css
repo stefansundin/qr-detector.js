@@ -8,6 +8,10 @@ summary, label {
   user-select: none;
 }
 
+.dropdown-toggle-split {
+  border-left: 1px solid white;
+}
+
 #script-tag {
   min-height: 65px;
 }
