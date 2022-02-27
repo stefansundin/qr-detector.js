@@ -8829,10 +8829,10 @@ q@^1.1.2:
   resolved "https://registry.npmjs.org/q/-/q-1.5.1.tgz"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
 
-qr-detector@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/qr-detector/-/qr-detector-0.0.2.tgz#f3065f93eb16ad14aa3b643f9173e98ad3c484e0"
-  integrity sha512-dHi9ZE46CZIl+F9mheLxamysDDOYpQoerCR+dnMec9h0LgO2EVLEfrJgS8qVa9sMN0V7/X/0pkdC8EPMmKUg7Q==
+qr-detector@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/qr-detector/-/qr-detector-0.0.3.tgz#9de08b4dae2067d62e94210a0da54af2afdd20e0"
+  integrity sha512-F91vHWuJjBKqIkz4deEn+Y3RHOHBsGEccmAbo3QO+QFfrRP/t0nlX93CKq8q0Dg035kYCWQbDCUZg6/kBNXEEA==
   dependencies:
     jsqr-es6 "^1.4.0-1"
 
