@@ -477,6 +477,15 @@ window.addEventListener('DOMContentLoaded', () => {
   $(list_webcam.parentElement).on('show.bs.dropdown', async () => {
     try {
       // Note: can't access the device label when the file:// protocol is used!
+      if (defaultDeviceId) {
+        // Update the bolded item first, because it takes a very noticible moment to enumerate the devices
+        for (const item of list_webcam.childNodes) {
+          item.classList.toggle(
+            'font-weight-bold',
+            item.dataset.deviceId === defaultDeviceId,
+          );
+        }
+      }
       let devices = (await navigator.mediaDevices.enumerateDevices()).filter(
         device => device.kind === 'videoinput',
       );
@@ -502,6 +511,7 @@ window.addEventListener('DOMContentLoaded', () => {
           const item = document.createElement('button');
           item.className = 'dropdown-item';
           item.textContent = device.label || 'Unnamed device';
+          item.dataset.deviceId = device.deviceId;
           if (defaultDeviceId === device.deviceId) {
             item.classList.add('font-weight-bold');
           }
