@@ -486,10 +486,27 @@ window.addEventListener('DOMContentLoaded', () => {
           );
         }
       }
+
       let devices = (await navigator.mediaDevices.enumerateDevices()).filter(
         device => device.kind === 'videoinput',
       );
+      if (
+        devices.every(device => {
+          if (!device.deviceId) {
+            return false;
+          }
+          const item = list_webcam.querySelector(
+            `[data-device-id='${device.deviceId}']`,
+          );
+          return item && item.textContent !== 'Unnamed device';
+        })
+      ) {
+        // No need to re-enumerate the devices if there are no new devices
+        return;
+      }
+
       if (!devices.every(device => device.deviceId && device.label)) {
+        // We have to ask for webcam access (certain browsers require the webcam to be on)
         const mediaStream = await navigator.mediaDevices.getUserMedia({
           video: true,
         });
@@ -498,6 +515,7 @@ window.addEventListener('DOMContentLoaded', () => {
         );
         mediaStream.getTracks().forEach(track => track.stop());
       }
+
       while (list_webcam.hasChildNodes()) {
         list_webcam.removeChild(list_webcam.firstChild);
       }
