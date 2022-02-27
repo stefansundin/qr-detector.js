@@ -480,15 +480,14 @@ window.addEventListener('DOMContentLoaded', () => {
       let devices = (await navigator.mediaDevices.enumerateDevices()).filter(
         device => device.kind === 'videoinput',
       );
-      if (!devices.every(device => device.deviceId)) {
-        await navigator.mediaDevices
-          .getUserMedia({ video: true })
-          .then(mediaStream =>
-            mediaStream.getTracks().forEach(track => track.stop()),
-          );
+      if (!devices.every(device => device.deviceId && device.label)) {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
         devices = (await navigator.mediaDevices.enumerateDevices()).filter(
           device => device.kind === 'videoinput',
         );
+        mediaStream.getTracks().forEach(track => track.stop());
       }
       while (list_webcam.hasChildNodes()) {
         list_webcam.removeChild(list_webcam.firstChild);
