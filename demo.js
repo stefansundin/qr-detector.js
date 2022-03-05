@@ -379,19 +379,27 @@ window.addEventListener('DOMContentLoaded', () => {
     for (const item of data) {
       let container = outputMap[item.rawValue];
       if (container) {
-        const input_group_text = container.querySelector(
-          'span[class="input-group-text"]',
-        );
-        const num = parseInt(input_group_text.dataset.num, 10) + 1;
-        input_group_text.dataset.num = num;
-        input_group_text.textContent = `Detected ${num} times`;
+        let counter = container.querySelector('small');
+        if (!counter) {
+          counter = document.createElement('small');
+          container.appendChild(counter);
+        }
+        const num = parseInt(container.dataset.num, 10) + 1;
+        container.dataset.num = num;
+        counter.textContent = `Detected ${num} times`;
         output.prepend(container);
       } else {
         container = document.createElement('div');
-        container.className = 'input-group mt-2 mb-2';
+        container.className = 'form-group mt-2 mb-2';
+        container.dataset.num = '1';
+        let input_group = document.createElement('div');
+        input_group.className = 'input-group';
         let input;
         if (item.rawValue.includes('\n')) {
           input = document.createElement('textarea');
+          input.style.height = `${
+            12 + 26 * item.rawValue.split('\n').length
+          }px`;
         } else {
           input = document.createElement('input');
         }
@@ -399,14 +407,7 @@ window.addEventListener('DOMContentLoaded', () => {
         input.readonly = true;
         input.className = 'form-control';
         input.value = item.rawValue;
-        container.appendChild(input);
-        const input_group = document.createElement('span');
-        input_group.className = 'input-group-append';
-        const input_group_text = document.createElement('span');
-        input_group_text.className = 'input-group-text';
-        input_group_text.dataset.num = '1';
-        input_group_text.textContent = 'Detected 1 time';
-        input_group.appendChild(input_group_text);
+        input_group.appendChild(input);
         container.appendChild(input_group);
         output.prepend(container);
         outputMap[item.rawValue] = container;
