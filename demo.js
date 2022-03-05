@@ -150,6 +150,17 @@ window.addEventListener('DOMContentLoaded', () => {
   );
   const script_tag = document.getElementById('script-tag');
   script_tag.textContent = `<script src="${script.src}" integrity="${script.integrity}" crossorigin="${script.crossOrigin}"></script>`;
+  const script_tag_copy = document.getElementById('script-tag-copy');
+  script_tag_copy.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(script_tag.textContent);
+    } catch {
+      script_tag_copy.classList.add('btn-danger');
+      script_tag_copy.classList.remove('btn-info');
+      script_tag_copy.textContent = 'Error';
+      script_tag.select();
+    }
+  });
 
   nativeBarcodeDetectorSupported().then(supported => {
     if (supported) {
@@ -411,17 +422,31 @@ window.addEventListener('DOMContentLoaded', () => {
         input.className = 'form-control';
         input.value = item.rawValue;
         input_group.appendChild(input);
+        const input_group_append = document.createElement('span');
+        input_group_append.className = 'input-group-append';
         if (is_link) {
-          const input_group_append = document.createElement('span');
-          input_group_append.className = 'input-group-append';
           const link = document.createElement('a');
           link.className = 'btn btn-primary';
           link.target = '_blank';
           link.href = item.rawValue;
           link.textContent = 'Open';
           input_group_append.appendChild(link);
-          input_group.appendChild(input_group_append);
         }
+        const copy = document.createElement('button');
+        copy.className = 'btn btn-info';
+        copy.textContent = 'Copy';
+        copy.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(item.rawValue);
+          } catch {
+            copy.classList.add('btn-danger');
+            copy.classList.remove('btn-info');
+            copy.textContent = 'Error';
+            input.select();
+          }
+        });
+        input_group_append.appendChild(copy);
+        input_group.appendChild(input_group_append);
         container.appendChild(input_group);
         output.prepend(container);
         outputMap[item.rawValue] = container;
