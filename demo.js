@@ -389,6 +389,9 @@ window.addEventListener('DOMContentLoaded', () => {
         counter.textContent = `Detected ${num} times`;
         output.prepend(container);
       } else {
+        const is_link =
+          item.rawValue.startsWith('https://') ||
+          item.rawValue.startsWith('http://');
         container = document.createElement('div');
         container.className = 'form-group mt-2 mb-2';
         container.dataset.num = '1';
@@ -408,6 +411,17 @@ window.addEventListener('DOMContentLoaded', () => {
         input.className = 'form-control';
         input.value = item.rawValue;
         input_group.appendChild(input);
+        if (is_link) {
+          const input_group_append = document.createElement('span');
+          input_group_append.className = 'input-group-append';
+          const link = document.createElement('a');
+          link.className = 'btn btn-primary';
+          link.target = '_blank';
+          link.href = item.rawValue;
+          link.textContent = 'Open';
+          input_group_append.appendChild(link);
+          input_group.appendChild(input_group_append);
+        }
         container.appendChild(input_group);
         output.prepend(container);
         outputMap[item.rawValue] = container;
