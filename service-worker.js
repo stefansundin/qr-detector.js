@@ -1,3 +1,6 @@
+// Increment this number to trigger offline clients to update their caches:
+// v1
+
 self.addEventListener('install', e => {
   e.waitUntil(
     caches
