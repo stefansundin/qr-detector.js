@@ -712,8 +712,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     install_service_worker.addEventListener('click', async e => {
       e.preventDefault();
-      install_service_worker.indeterminate = true;
-
       const registrations = await navigator.serviceWorker.getRegistrations();
       if (registrations.length > 0) {
         for (const registration of registrations) {
