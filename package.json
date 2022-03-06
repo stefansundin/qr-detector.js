@@ -12,7 +12,8 @@
   "browser": "dist/QrDetector.js",
   "types": "dist/QrDetector.d.ts",
   "scripts": {
-    "build": "./build.sh"
+    "build": "./build.sh",
+    "lint": "eslint src"
   },
   "keywords": [
     "qr",
@@ -25,6 +26,9 @@
     "jsqr-es6": "^1.4.0-1"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
+    "eslint": "^8.10.0",
     "ts-loader": "^9.2.7",
     "typescript": "~4.5.5",
     "webpack": "^5.70.0",
