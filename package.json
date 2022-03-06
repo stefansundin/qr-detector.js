@@ -4,8 +4,8 @@
   "description": "A QR decoder that uses BarcodeDetector with a fallback to jsQR.",
   "homepage": "https://github.com/stefansundin/qr-detector.js",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/stefansundin/qr-detector.js.git"
+    "type": "git",
+    "url": "https://github.com/stefansundin/qr-detector.js.git"
   },
   "author": "Stefan Sundin",
   "license": "MIT",
