@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 if grep -q 'root /path/to/' nginx.conf; then
-  echo "Please update the \"root\" directive in nginx.conf to point to this directory ($PWD)."
+  echo "Please update the \"root\" directive in nginx.conf to point to this directory: $PWD"
   exit 1
 fi
 
