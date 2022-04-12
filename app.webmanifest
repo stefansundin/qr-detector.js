@@ -11,5 +11,18 @@
       "sizes": "256x256",
       "type": "image/png"
     }
-  ]
+  ],
+  "share_target": {
+    "action": "./share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "file",
+          "accept": "image/*"
+        }
+      ]
+    }
+  }
 }

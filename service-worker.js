@@ -1,7 +1,9 @@
 // Increment this number to trigger offline clients to update their caches:
-// v1
+// v2
 
 self.addEventListener('install', e => {
+  self.skipWaiting();
+
   e.waitUntil(
     caches
       .open('qr-detector.js')
@@ -23,5 +25,20 @@ self.addEventListener('install', e => {
 
 self.addEventListener('fetch', e => {
   // console.log(e.request.url);
+
+  if (e.request.method === 'POST' && e.request.url.endsWith('/share')) {
+    e.respondWith(Response.redirect(self.registration.scope));
+    e.waitUntil(async function () {
+      const data = await e.request.formData();
+      const file = data.get('file');
+      const client = await self.clients.get(e.resultingClientId || e.clientId);
+      client.postMessage({
+        action: 'detect',
+        file,
+      });
+    }());
+    return;
+  }
+
   e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
 });

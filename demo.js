@@ -723,6 +723,13 @@ window.addEventListener('DOMContentLoaded', () => {
       }
       refresh_service_worker_info();
     });
+
+    navigator.serviceWorker.addEventListener('message', e => {
+      console.log('event', e);
+      if (e.data.action === 'detect') {
+        handleFile(e.data.file);
+      }
+    });
   }
 
   let deferredPrompt;
