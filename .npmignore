@@ -4,7 +4,6 @@ Thumbs.db
 .~lock.*
 
 node_modules
-yarn-error.log
 
 dist/QrDetector.min.js*
 build.sh
