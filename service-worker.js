@@ -1,5 +1,5 @@
 // Increment this number to trigger offline clients to update their caches:
-// v2
+// v3
 
 self.addEventListener('install', e => {
   self.skipWaiting();
@@ -28,15 +28,19 @@ self.addEventListener('fetch', e => {
 
   if (e.request.method === 'POST' && e.request.url.endsWith('/share')) {
     e.respondWith(Response.redirect(self.registration.scope));
-    e.waitUntil(async function () {
-      const data = await e.request.formData();
-      const file = data.get('file');
-      const client = await self.clients.get(e.resultingClientId || e.clientId);
-      client.postMessage({
-        action: 'detect',
-        file,
-      });
-    }());
+    e.waitUntil(
+      (async function () {
+        const data = await e.request.formData();
+        const file = data.get('file');
+        const client = await self.clients.get(
+          e.resultingClientId || e.clientId,
+        );
+        client.postMessage({
+          action: 'detect',
+          file,
+        });
+      })(),
+    );
     return;
   }
 
