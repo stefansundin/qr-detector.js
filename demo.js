@@ -175,36 +175,45 @@ window.addEventListener('DOMContentLoaded', () => {
     alert.classList.remove('d-none');
   });
 
-  use_worker.addEventListener('change', e => {
-    if (use_worker.checked) {
-      try {
-        worker = new Worker('worker.js');
-        worker.addEventListener('message', e => {
-          const [nonce, results] = e.data;
-          const [resolve, _] = workerPromises[nonce];
+  if (window.Worker) {
+    use_worker.disabled = false;
+    use_worker.addEventListener('change', e => {
+      if (use_worker.checked) {
+        try {
+          worker = new Worker('worker.js');
+          worker.addEventListener('message', e => {
+            const [nonce, results] = e.data;
+            const [resolve, _] = workerPromises[nonce];
+            delete workerPromises[nonce];
+            resolve(results);
+          });
+          localStorage.QrDetectorDemo_use_worker = true;
+        } catch (err) {
+          console.error(err);
+          use_worker.checked = false;
+          use_worker.disabled = true;
+          const label = document.querySelector('label[for="use-worker"]');
+          label.classList.add('text-danger');
+          label.title = err;
+          label.appendChild(document.createTextNode(' (error loading)'));
+        }
+      } else {
+        worker.terminate();
+        worker = null;
+        delete localStorage.QrDetectorDemo_use_worker;
+        for (const nonce in workerPromises) {
+          const [_, reject] = workerPromises[nonce];
           delete workerPromises[nonce];
-          resolve(results);
-        });
-      } catch (err) {
-        console.error(err);
-        use_worker.checked = false;
-        use_worker.disabled = true;
-        const label = document.querySelector('label[for="use-worker"]');
-        label.classList.add('text-danger');
-        label.title = err;
-        label.appendChild(document.createTextNode(' (error loading)'));
+          reject('Worker terminated.');
+        }
+        return;
       }
-    } else {
-      worker.terminate();
-      worker = null;
-      for (const nonce in workerPromises) {
-        const [_, reject] = workerPromises[nonce];
-        delete workerPromises[nonce];
-        reject('Worker terminated.');
-      }
-      return;
+    });
+    if (localStorage.QrDetectorDemo_use_worker !== undefined) {
+      use_worker.checked = localStorage.QrDetectorDemo_use_worker;
+      use_worker.dispatchEvent(new Event('change'));
     }
-  });
+  }
 
   const detect = async input => {
     btn_status.textContent = 'Detecting...';
@@ -697,6 +706,11 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   if (navigator.serviceWorker && document.location.protocol === 'https:') {
+    const service_worker_alert = document.getElementById(
+      'service-worker-alert',
+    );
+    service_worker_alert.classList.add('d-none');
+
     const install_service_worker = document.getElementById(
       'install-service-worker',
     );

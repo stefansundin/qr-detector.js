@@ -52,8 +52,11 @@
     <details class="mb-2">
       <summary>Offline</summary>
       <p>Installing a service worker makes this demo page available offline. You can also add the page to your home screen <a href="https://caniuse.com/web-app-manifest">on certain platforms</a>.</p>
-      <button class="btn btn-primary mb-2 mr-2" id="install-service-worker" disabled>Install service worker</button>
-      <button class="btn btn-primary mb-2 mr-2" id="a2hs" disabled>Add to home screen</button>
+      <button class="btn btn-primary mb-2 mr-2" id="install-service-worker" autocomplete="off" disabled>Install service worker</button>
+      <button class="btn btn-primary mb-2 mr-2" id="a2hs" autocomplete="off" disabled>Add to home screen</button>
+      <div class="alert alert-danger" role="alert" id="service-worker-alert">
+        Service workers are not supported by your web browser.
+      </div>
       <hr>
     </details>
 
@@ -61,7 +64,10 @@
     <p>Tip: get a sample image <a href="https://duckduckgo.com/?q=qr+code&iax=images&ia=images" target="_blank">from a search engine</a> to test with.</p>
 
     <div class="custom-control custom-checkbox">
-      <p><input class="custom-control-input" type="checkbox" id="use-worker" autocomplete="off"><label class="custom-control-label" for="use-worker">Use web worker</label></p>
+      <p>
+        <input class="custom-control-input" type="checkbox" id="use-worker" autocomplete="off" disabled>
+        <label class="custom-control-label" for="use-worker">Use web worker</label>
+      </p>
     </div>
 
     <div class="mb-3">
