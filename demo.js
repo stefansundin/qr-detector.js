@@ -131,6 +131,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const input_file = document.getElementById('input-file');
   const btn_file = document.getElementById('btn-file');
   const btn_webcam = document.getElementById('btn-webcam');
+  const btn_webcam_list = document.getElementById('btn-webcam-list');
   const list_webcam = document.getElementById('list-webcam');
   const btn_screen_capture = document.getElementById('btn-screen-capture');
   const btn_clear = document.getElementById('btn-clear');
@@ -326,7 +327,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     video.srcObject.getTracks().forEach(track => track.stop());
     video.srcObject = null;
-    btn_webcam.disabled = false;
+    btn_webcam.disabled = btn_webcam_list.disabled = false;
     btn_screen_capture.disabled = false;
     if (numProcessing === 0) {
       btn_status.textContent = 'Idle';
@@ -490,7 +491,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (video.srcObject === null) {
       video.pause();
       video.removeAttribute('src');
-      btn_webcam.disabled = true;
+      btn_webcam.disabled = btn_webcam_list.disabled = true;
       btn_screen_capture.disabled = true;
       try {
         video.srcObject = await navigator.mediaDevices.getUserMedia(
@@ -503,7 +504,7 @@ window.addEventListener('DOMContentLoaded', () => {
         btn_screen_capture.disabled = false;
         return;
       } finally {
-        btn_webcam.disabled = false;
+        btn_webcam.disabled = btn_webcam_list.disabled = false;
       }
       btn_webcam.classList.remove('btn-danger');
       btn_webcam.textContent = 'Stop webcam';
@@ -608,7 +609,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (video.srcObject === null) {
       video.pause();
       video.removeAttribute('src');
-      btn_webcam.disabled = true;
+      btn_webcam.disabled = btn_webcam_list.disabled = true;
       btn_screen_capture.disabled = true;
       try {
         video.srcObject = await navigator.mediaDevices.getDisplayMedia({
@@ -621,7 +622,7 @@ window.addEventListener('DOMContentLoaded', () => {
         console.error(err);
         btn_screen_capture.classList.add('btn-danger');
         btn_screen_capture.textContent = err;
-        btn_webcam.disabled = false;
+        btn_webcam.disabled = btn_webcam_list.disabled = false;
         return;
       } finally {
         btn_screen_capture.disabled = false;
