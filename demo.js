@@ -19,6 +19,12 @@ if (!window.OffscreenCanvas) {
   };
 }
 
+// Firefox - https://caniuse.com/mdn-api_htmlvideoelement_requestvideoframecallback
+if (!HTMLVideoElement.prototype.requestVideoFrameCallback) {
+  HTMLVideoElement.prototype.requestVideoFrameCallback = callback =>
+    requestAnimationFrame(callback);
+}
+
 const nativeBarcodeDetectorSupported = async () => {
   if (window.BarcodeDetector) {
     const supportedFormats = await window.BarcodeDetector.getSupportedFormats();
@@ -336,7 +342,7 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   const processVideoFrame = () => {
-    requestAnimationFrame(async () => {
+    video.requestVideoFrameCallback(async () => {
       if (!video.src && !video.srcObject) {
         return;
       }
