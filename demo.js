@@ -717,16 +717,24 @@ window.addEventListener('DOMContentLoaded', () => {
     install_service_worker.disabled = false;
 
     async function refresh_service_worker_info() {
-      const registrations = await navigator.serviceWorker.getRegistrations();
+      const all_registrations =
+        await navigator.serviceWorker.getRegistrations();
+      const installed = all_registrations.some(r =>
+        window.location.href.startsWith(r.scope),
+      );
       install_service_worker.textContent = `${
-        registrations.length > 0 ? 'Uninstall' : 'Install'
+        installed ? 'Uninstall' : 'Install'
       } service worker`;
     }
     refresh_service_worker_info();
 
     install_service_worker.addEventListener('click', async e => {
       e.preventDefault();
-      const registrations = await navigator.serviceWorker.getRegistrations();
+      const all_registrations =
+        await navigator.serviceWorker.getRegistrations();
+      const registrations = all_registrations.filter(r =>
+        window.location.href.startsWith(r.scope),
+      );
       if (registrations.length > 0) {
         for (const registration of registrations) {
           await registration.unregister();

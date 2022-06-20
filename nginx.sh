@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-if grep -q 'root /path/to/' nginx.conf; then
-  echo "Please update the \"root\" directive in nginx.conf to point to this directory: $PWD"
+if grep -q 'alias /path/to/' nginx.conf; then
+  echo "Please update the \"alias\" directive in nginx.conf to point to this directory: $PWD"
   exit 1
 fi
 
@@ -15,6 +15,6 @@ if [[ ! -f selfsigned.key ]]; then
   exit 1
 fi
 
-echo "https://localhost:4443/"
+echo "https://localhost:4443/qr-detector.js/"
 set -x
 nginx -c $PWD/nginx.conf
