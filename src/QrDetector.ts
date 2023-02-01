@@ -13,7 +13,7 @@ import {
 } from './utils';
 
 export default class QrDetector implements BarcodeDetector {
-  nativeDetectorSupported: boolean = undefined;
+  _nativeDetectorSupported: boolean | undefined = undefined;
   barcodeDetector: BarcodeDetector;
 
   constructor(barcodeDetectorOptions?: BarcodeDetectorOptions) {
@@ -25,24 +25,8 @@ export default class QrDetector implements BarcodeDetector {
   }
 
   async detect(image: ImageBitmapSource): Promise<DetectedBarcode[]> {
-    // Attempt native BarcodeDetector
-    if (this.nativeDetectorSupported) {
+    if (this.nativeDetectorSupported()) {
       return this.barcodeDetector.detect(image);
-    } else if (this.nativeDetectorSupported === undefined) {
-      if ((self as any).BarcodeDetector) {
-        const supportedFormats = await (
-          self as any
-        ).BarcodeDetector.getSupportedFormats();
-        if (supportedFormats.includes('qr_code')) {
-          // Double check that the native BarcodeDetector isn't broken by decoding a test QR code. https://bugs.chromium.org/p/chromium/issues/detail?id=1382442
-          const testResult = await this.barcodeDetector.detect(testQrCode());
-          if (testResult.length === 1 && testResult[0].rawValue === 'ABC') {
-            this.nativeDetectorSupported = true;
-            return this.barcodeDetector.detect(image);
-          }
-        }
-      }
-      this.nativeDetectorSupported = false;
     }
 
     // Fall back to jsQR
@@ -104,5 +88,25 @@ export default class QrDetector implements BarcodeDetector {
 
   static async getSupportedFormats(): Promise<BarcodeFormat[]> {
     return ['qr_code'];
+  }
+
+  async nativeDetectorSupported(): Promise<boolean> {
+    if (this._nativeDetectorSupported === undefined) {
+      if ((self as any).BarcodeDetector) {
+        const supportedFormats = await (
+          self as any
+        ).BarcodeDetector.getSupportedFormats();
+        if (supportedFormats.includes('qr_code')) {
+          // Double check that the native BarcodeDetector isn't broken by decoding a test QR code. https://bugs.chromium.org/p/chromium/issues/detail?id=1382442
+          const testResult = await this.barcodeDetector.detect(testQrCode());
+          if (testResult.length === 1 && testResult[0].rawValue === 'ABC') {
+            this._nativeDetectorSupported = true;
+            return true;
+          }
+        }
+      }
+      this._nativeDetectorSupported = false;
+    }
+    return this._nativeDetectorSupported;
   }
 }
