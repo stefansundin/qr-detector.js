@@ -6,7 +6,11 @@ import type {
   BarcodeFormat,
   DetectedBarcode,
 } from './BarcodeDetector';
-import { blobToImageData, canvasImageSourceToImageData } from './utils';
+import {
+  blobToImageData,
+  canvasImageSourceToImageData,
+  testQrCode,
+} from './utils';
 
 export default class QrDetector implements BarcodeDetector {
   nativeDetectorSupported: boolean = undefined;
@@ -30,8 +34,12 @@ export default class QrDetector implements BarcodeDetector {
           self as any
         ).BarcodeDetector.getSupportedFormats();
         if (supportedFormats.includes('qr_code')) {
-          this.nativeDetectorSupported = true;
-          return this.barcodeDetector.detect(image);
+          // Double check that the native BarcodeDetector isn't broken by decoding a test QR code. https://bugs.chromium.org/p/chromium/issues/detail?id=1382442
+          const testResult = await this.barcodeDetector.detect(testQrCode());
+          if (testResult.length === 1 && testResult[0].rawValue === 'ABC') {
+            this.nativeDetectorSupported = true;
+            return this.barcodeDetector.detect(image);
+          }
         }
       }
       this.nativeDetectorSupported = false;
