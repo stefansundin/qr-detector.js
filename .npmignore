@@ -8,3 +8,5 @@ node_modules
 dist/QrDetector.min.js*
 build.sh
 webpack.config.js
+.eslintrc.js
+.prettierrc
