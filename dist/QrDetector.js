@@ -4,24 +4,14 @@ const jsqr_es6_1 = require("jsqr-es6");
 const utils_1 = require("./utils");
 class QrDetector {
     constructor(barcodeDetectorOptions) {
-        this.nativeDetectorSupported = undefined;
+        this._nativeDetectorSupported = undefined;
         if (self.BarcodeDetector) {
             this.barcodeDetector = new self.BarcodeDetector(barcodeDetectorOptions);
         }
     }
     async detect(image) {
-        if (this.nativeDetectorSupported) {
+        if (this.nativeDetectorSupported()) {
             return this.barcodeDetector.detect(image);
-        }
-        else if (this.nativeDetectorSupported === undefined) {
-            if (self.BarcodeDetector) {
-                const supportedFormats = await self.BarcodeDetector.getSupportedFormats();
-                if (supportedFormats.includes('qr_code')) {
-                    this.nativeDetectorSupported = true;
-                    return this.barcodeDetector.detect(image);
-                }
-            }
-            this.nativeDetectorSupported = false;
         }
         if (image instanceof ImageData) {
         }
@@ -58,6 +48,22 @@ class QrDetector {
     }
     static async getSupportedFormats() {
         return ['qr_code'];
+    }
+    async nativeDetectorSupported() {
+        if (this._nativeDetectorSupported === undefined) {
+            if (self.BarcodeDetector) {
+                const supportedFormats = await self.BarcodeDetector.getSupportedFormats();
+                if (supportedFormats.includes('qr_code')) {
+                    const testResult = await this.barcodeDetector.detect((0, utils_1.testQrCode)());
+                    if (testResult.length === 1 && testResult[0].rawValue === 'ABC') {
+                        this._nativeDetectorSupported = true;
+                        return true;
+                    }
+                }
+            }
+            this._nativeDetectorSupported = false;
+        }
+        return this._nativeDetectorSupported;
     }
 }
 exports.default = QrDetector;

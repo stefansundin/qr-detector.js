@@ -1,9 +1,10 @@
 import type { BarcodeDetector, BarcodeDetectorOptions, BarcodeFormat, DetectedBarcode } from './BarcodeDetector';
 export default class QrDetector implements BarcodeDetector {
-    nativeDetectorSupported: boolean;
+    _nativeDetectorSupported: boolean | undefined;
     barcodeDetector: BarcodeDetector;
     constructor(barcodeDetectorOptions?: BarcodeDetectorOptions);
     detect(image: ImageBitmapSource): Promise<DetectedBarcode[]>;
     static getSupportedFormats(): Promise<BarcodeFormat[]>;
+    nativeDetectorSupported(): Promise<boolean>;
 }
 //# sourceMappingURL=QrDetector.d.ts.map
