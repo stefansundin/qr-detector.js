@@ -5,12 +5,14 @@ const utils_1 = require("./utils");
 class QrDetector {
     constructor(barcodeDetectorOptions) {
         this._nativeDetectorSupported = undefined;
+        this.barcodeDetector = undefined;
         if (self.BarcodeDetector) {
             this.barcodeDetector = new self.BarcodeDetector(barcodeDetectorOptions);
         }
     }
     async detect(image) {
-        if (this.nativeDetectorSupported()) {
+        if (this._nativeDetectorSupported ||
+            (await this.nativeDetectorSupported())) {
             return this.barcodeDetector.detect(image);
         }
         if (image instanceof ImageData) {
