@@ -25,7 +25,10 @@ export default class QrDetector implements BarcodeDetector {
   }
 
   async detect(image: ImageBitmapSource): Promise<DetectedBarcode[]> {
-    if (this.nativeDetectorSupported()) {
+    if (
+      this._nativeDetectorSupported ||
+      (await this.nativeDetectorSupported())
+    ) {
       return this.barcodeDetector.detect(image);
     }
 
