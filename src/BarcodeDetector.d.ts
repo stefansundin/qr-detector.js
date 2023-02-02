@@ -1,7 +1,6 @@
 // https://wicg.github.io/shape-detection-api/#barcode-detection-api
 // https://developer.mozilla.org/en-US/docs/Web/API/Barcode_Detection_API
 
-export declare function Point2D(x: number, y: number): Point2D;
 export declare class Point2D {
   x: number;
   y: number;
