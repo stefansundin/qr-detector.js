@@ -14,7 +14,7 @@ import {
 
 export default class QrDetector implements BarcodeDetector {
   _nativeDetectorSupported: boolean | undefined = undefined;
-  barcodeDetector: BarcodeDetector;
+  barcodeDetector: BarcodeDetector | undefined = undefined;
 
   constructor(barcodeDetectorOptions?: BarcodeDetectorOptions) {
     if ((self as any).BarcodeDetector) {
