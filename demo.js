@@ -25,16 +25,6 @@ if (!HTMLVideoElement.prototype.requestVideoFrameCallback) {
     requestAnimationFrame(callback);
 }
 
-const nativeBarcodeDetectorSupported = async () => {
-  if (window.BarcodeDetector) {
-    const supportedFormats = await window.BarcodeDetector.getSupportedFormats();
-    if (supportedFormats.includes('qr_code')) {
-      return true;
-    }
-  }
-  return false;
-};
-
 const canvasImageSourceToImageData = img => {
   let canvas;
   if (img instanceof HTMLVideoElement) {
@@ -156,7 +146,9 @@ window.addEventListener('DOMContentLoaded', () => {
     'script[src^="https://cdn.jsdelivr.net/gh/stefansundin/qr-detector.js"]',
   );
   const script_tag = document.getElementById('script-tag');
-  script_tag.textContent = `<script src="${script.src}" integrity="${script.integrity}" crossorigin="${script.crossOrigin}"></script>`;
+  if (script) {
+    script_tag.textContent = `<script src="${script.src}" integrity="${script.integrity}" crossorigin="${script.crossOrigin}"></script>`;
+  }
   const script_tag_copy = document.getElementById('script-tag-copy');
   script_tag_copy.addEventListener('click', async () => {
     try {
@@ -169,7 +161,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  nativeBarcodeDetectorSupported().then(supported => {
+  detector.nativeDetectorSupported().then(supported => {
     if (supported) {
       alert.classList.add('alert-success');
       alert.textContent =
