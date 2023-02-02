@@ -1,6 +1,6 @@
 import './App.css';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import QrDetector from 'qr-detector';
 
@@ -10,14 +10,15 @@ function App() {
     useState(undefined);
   const [values, setValues] = useState([]);
 
+  useEffect(() => {
+    detector.nativeDetectorSupported().then(setNativeDetectorSupported);
+  }, [detector]);
+
   const selectFile = async e => {
     for (const file of e.target.files) {
       console.log(file);
       const bitmap = await createImageBitmap(file);
       const results = await detector.detect(bitmap);
-      if (nativeDetectorSupported === undefined) {
-        setNativeDetectorSupported(detector.nativeDetectorSupported);
-      }
       if (results.length === 0) {
         setValues(old => ['No QR code detected in the image.', ...old]);
         return;
@@ -45,9 +46,7 @@ function App() {
         is done in the browser.
       </p>
       <p>
-        {nativeDetectorSupported === undefined
-          ? 'Perform a detection to find out if your browser has native support.'
-          : nativeDetectorSupported
+        {nativeDetectorSupported
           ? 'Your browser supports BarcodeDetector.'
           : 'jsQR fallback is used.'}
       </p>
