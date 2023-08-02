@@ -10,9 +10,9 @@ self.addEventListener('install', e => {
       .then(c =>
         c.addAll([
           'https://cdn.jsdelivr.net/gh/stefansundin/qr-detector.js@v0.0.5/dist/QrDetector.min.js',
-          'https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css',
-          'https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js',
-          'https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js',
+          'https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css',
+          'https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js',
+          'https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.slim.min.js',
           'QrDetector.min.js',
           'demo.css',
           'demo.js',
