@@ -27,6 +27,9 @@ export function canvasImageSourceToImageData(
   } else if (img instanceof SVGImageElement) {
     canvas.width = img.width.baseVal.value;
     canvas.height = img.height.baseVal.value;
+  } else if (img instanceof VideoFrame) {
+    canvas.width = img.codedWidth;
+    canvas.height = img.codedHeight;
   } else {
     canvas.width = img.width;
     canvas.height = img.height;
