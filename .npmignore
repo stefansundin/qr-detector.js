@@ -10,3 +10,4 @@ build.sh
 webpack.config.js
 .eslintrc.js
 .prettierrc
+.eslintignore
