@@ -12,8 +12,8 @@
   "browser": "dist/QrDetector.js",
   "types": "dist/QrDetector.d.ts",
   "scripts": {
-    "lint": "eslint src",
-    "prebuild": "eslint src",
+    "lint": "eslint src && tsc --noemit",
+    "prebuild": "npm run lint",
     "build": "./build.sh"
   },
   "keywords": [
