@@ -11,8 +11,9 @@ class QrDetector {
         }
     }
     async detect(image) {
-        if (this._nativeDetectorSupported ||
-            (await this.nativeDetectorSupported())) {
+        if (this._nativeDetectorSupported === true ||
+            (this._nativeDetectorSupported === undefined &&
+                (await this.nativeDetectorSupported()))) {
             return this.barcodeDetector.detect(image);
         }
         if (image instanceof ImageData) {

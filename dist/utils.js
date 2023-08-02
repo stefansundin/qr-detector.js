@@ -6,7 +6,7 @@ function blobToImageData(blob) {
     const img = new Image();
     return new Promise((resolve, reject) => {
         img.onload = () => resolve();
-        img.onerror = err => reject(err);
+        img.onerror = (err) => reject(err);
         img.src = blobUrl;
     }).then(() => {
         URL.revokeObjectURL(blobUrl);
@@ -28,6 +28,10 @@ function canvasImageSourceToImageData(img) {
     else if (img instanceof SVGImageElement) {
         canvas.width = img.width.baseVal.value;
         canvas.height = img.height.baseVal.value;
+    }
+    else if (img instanceof VideoFrame) {
+        canvas.width = img.codedWidth;
+        canvas.height = img.codedHeight;
     }
     else {
         canvas.width = img.width;
