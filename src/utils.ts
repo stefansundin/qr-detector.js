@@ -4,7 +4,7 @@ export function blobToImageData(blob: Blob): Promise<ImageData> {
 
   return new Promise<void>((resolve, reject) => {
     img.onload = () => resolve();
-    img.onerror = err => reject(err);
+    img.onerror = (err) => reject(err);
     img.src = blobUrl;
   }).then(() => {
     URL.revokeObjectURL(blobUrl);
